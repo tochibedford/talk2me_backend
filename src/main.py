@@ -18,7 +18,7 @@ def removeUrls(tweet: str):
     regexString = r"http[s]?:\/\/([\/]?[\w.]+)+"
     return re.sub(regexString, "", tweet)
 
-# returns not more than the given `amount` of tweets. 
+# returns not more than the given `amount` of tweets 
 # promoted tweets and tweets that are empty after being cleaned are "skipped",
 # hence the number of returned tweets isn't guaranteed to be up to `amount`
 def getTweets(user: str, start: int = 0, amount: int = None) -> TweetScrapeResult:
