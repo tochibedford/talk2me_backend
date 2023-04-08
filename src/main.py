@@ -1,13 +1,15 @@
 import re
+import json
 import sqlite3
+from datetime import datetime
 import snscrape.modules.twitter as sntwitter
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
 
-conn = sqlite3.connect('src/tweets.db')
-cur = conn.cursor()
+from database import insertUserTweets, updateUserTweets, getUserFromDB
 
+DATA_EXPIRY_DURATION_IN_HOURS = 15/60 
 class TweetScrapeResult(BaseModel):
     status: int
     value: list[str]
@@ -62,14 +64,41 @@ def getTweets(user: str, start: int = 0, amount: int = None) -> TweetScrapeResul
     return result
 
 
-# print()
+# APIS AND DATABASE
 app = FastAPI()
 
 @app.get('/getUserTweets/{user}')
 async def getUserTweets(user: str):
-    cur.execute("INSERT INTO tweets VALUES ()")
-    return getTweets("martins_ikpe")
+    dbTweetRecord = getUserFromDB(user)
+    if dbTweetRecord:
+        tweet_id,_,_,created_at = dbTweetRecord
+        currentTime = datetime.now()
+        time_difference = currentTime - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+        if time_difference.total_seconds() < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
+            return json.loads(dbTweetRecord[2])
+        else:
+            tweets = getTweets(f"{user}")
+            updateUserTweets(user, json.dumps(tweets.value))
+            return tweets.value
+    else:
+        tweets = getTweets(f"{user}")
+        insertUserTweets(user, json.dumps(tweets.value))
+        return tweets.value
 
 @app.get('/getUserTweets/{user}/{amount}')
 async def getUserTweetsUpToAmount(user: str, amount: str):
-    return getTweets("martins_ikpe", amount=int(amount))
+    dbTweetRecord = getUserFromDB(user)
+    if dbTweetRecord:
+        tweet_id,_,_,created_at = dbTweetRecord
+        currentTime = datetime.now()
+        time_difference = currentTime - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+        if time_difference.total_seconds() < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
+            return json.loads(dbTweetRecord[2])
+        else:
+            tweets = getTweets(f"{user}", amount=int(amount))
+            updateUserTweets(user, json.dumps(tweets.value))
+            return tweets.value
+    else:
+        tweets = getTweets(f"{user}", amount=int(amount))
+        insertUserTweets(user, json.dumps(tweets.value))
+        return tweets.value
