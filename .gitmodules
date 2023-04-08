@@ -1,0 +1,4 @@
+[submodule "talk2me_backend"]
+	path = talk2me_backend
+	url = https://github.com/tochibedford/talk2me_backend.git
+	branch = master
