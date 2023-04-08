@@ -60,6 +60,11 @@ def getTweets(user: str, start: int = 0, amount: int = None) -> TweetScrapeResul
 
 # print()
 app = FastAPI()
+
 @app.get('/getUserTweets/{user}')
-async def getUserTweets():
+async def getUserTweets(user: str):
     return getTweets("martins_ikpe")
+
+@app.get('/getUserTweets/{user}/{amount}')
+async def getUserTweetsUpToAmount(user: str, amount: str):
+    return getTweets("martins_ikpe", amount=int(amount))
