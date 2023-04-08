@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('tweets.db')
+conn = sqlite3.connect('src/tweets.db')
 cur = conn.cursor()
 
 # cur.execute("""CREATE TABLE users(
@@ -8,13 +8,12 @@ cur = conn.cursor()
 #     twitter_id varchar(255) unique
 # );""")
 
-# cur.execute("""CREATE TABLE tweets (
-#     user_id varchar(255),
-#     tweet_id varchar(255),
-#     timestamp datetime,
-#     tweet_data blob,
-#     PRIMARY KEY (user_id, tweet_id)
-# ); """)
+cur.execute("""CREATE TABLE tweets (
+    id INTEGER PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    tweet_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); """)
 
 conn.commit()
 conn.close()
