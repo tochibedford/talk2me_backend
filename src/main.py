@@ -1,8 +1,12 @@
 import re
+import sqlite3
 import snscrape.modules.twitter as sntwitter
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
+
+conn = sqlite3.connect('src/tweets.db')
+cur = conn.cursor()
 
 class TweetScrapeResult(BaseModel):
     status: int
@@ -63,6 +67,7 @@ app = FastAPI()
 
 @app.get('/getUserTweets/{user}')
 async def getUserTweets(user: str):
+    cur.execute("INSERT INTO tweets VALUES ()")
     return getTweets("martins_ikpe")
 
 @app.get('/getUserTweets/{user}/{amount}')
