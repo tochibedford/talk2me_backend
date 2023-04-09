@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
 
-from database import insertUserTweets, updateUserTweets, getUserFromDB
+from database import insertUserTweets, updateUserTweets, getUserFromDB, createTweetsTable
 
 DATA_EXPIRY_DURATION_IN_HOURS = 15/60 
 class TweetScrapeResult(BaseModel):
@@ -66,9 +66,10 @@ def getTweets(user: str, start: int = 0, amount: int = None) -> TweetScrapeResul
 
 # APIS AND DATABASE
 app = FastAPI()
+createTweetsTable()
 
 @app.get('/getUserTweets/{user}')
-async def getUserTweets(user: str):
+def getUserTweets(user: str):
     dbTweetRecord = getUserFromDB(user)
     if dbTweetRecord:
         tweet_id,_,_,created_at = dbTweetRecord
@@ -86,7 +87,7 @@ async def getUserTweets(user: str):
         return tweets.value
 
 @app.get('/getUserTweets/{user}/{amount}')
-async def getUserTweetsUpToAmount(user: str, amount: str):
+def getUserTweetsUpToAmount(user: str, amount: str):
     dbTweetRecord = getUserFromDB(user)
     if dbTweetRecord:
         tweet_id,_,_,created_at = dbTweetRecord
