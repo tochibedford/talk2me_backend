@@ -10,4 +10,4 @@ COPY ./src .
 
 EXPOSE 8000
 
-CMD [ "tree", "-s","&&", "python", "./init.py" ]
+CMD [ "python", "./init.py" ]
