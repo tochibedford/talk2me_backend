@@ -10,4 +10,6 @@ COPY ./src .
 
 EXPOSE 8000
 
+VOLUME /data
+
 CMD [ "python", "./init.py" ]
