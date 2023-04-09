@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('data/tweets.db')
+conn = sqlite3.connect(":memory:")
 
 # database has the schema:
 
