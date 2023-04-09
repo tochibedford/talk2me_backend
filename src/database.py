@@ -1,17 +1,18 @@
 import sqlite3
 
 conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
 
 # database has the schema:
 
-# cur.execute("""CREATE TABLE tweets (
-#     id INTEGER PRIMARY KEY AUTOINCREMENT,
-#     user_id TEXT NOT NULL,
-#     tweet_text TEXT NOT NULL,
-#     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-# ); """)
+cursor.execute("""CREATE TABLE tweets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    tweet_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); """)
 
-# conn.commit()
+conn.commit()
 # conn.close()
 
 def getUserFromDB(user_id):
