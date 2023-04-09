@@ -50,8 +50,7 @@ def getTweets(user: str, start: int = 0, amount: int = None) -> TweetScrapeResul
     for tweet in scraperGenerator:
         try:
             if not tweet.rawContent.startswith("RT"):
-                cleanedTweet = removeTweetAts(tweet.rawContent)
-                cleanedTweet = removeUrls(cleanedTweet)
+                cleanedTweet = removeUrls(tweet.rawContent)
                 cleanedTweet = cleanedTweet.strip()
                 if(cleanedTweet != ""): #skips tweets that are empty after cleaning
                     result.value.append(cleanedTweet)
