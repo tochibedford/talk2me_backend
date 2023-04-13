@@ -3,7 +3,7 @@ import sqlite3
 def createTweetsTable():
     # Connect to the database
     conn = sqlite3.connect("data/tweets.db")
-    # conn = sqlite3.connect('tweets.db')
+    conn.execute("PRAGMA timezone = 'UTC'")
     cur = conn.cursor()
 
     # Create the tweets table if it doesn't already exist
@@ -11,7 +11,7 @@ def createTweetsTable():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL,
         tweet_text TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT (strftime('%s','now','utc'))
     ); """)
 
     # Commit the changes and close the connection
