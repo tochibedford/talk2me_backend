@@ -69,6 +69,8 @@ app = FastAPI()
 createTweetsTable()
 
 origins = [
+    "http://localhost:8000",
+    "http://localhost:5173",
 ]
 
 methods = ["GET"]
@@ -77,9 +79,7 @@ headers = ["Content-type"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
     allow_methods=methods,
-    allow_headers=headers,
 )
 
 @app.get('/getUserTweets/{user}')
