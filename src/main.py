@@ -4,6 +4,7 @@ import sqlite3
 from datetime import datetime
 import snscrape.modules.twitter as sntwitter
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
@@ -67,6 +68,22 @@ def getTweets(user: str, start: int = 0, amount: int = None) -> TweetScrapeResul
 app = FastAPI()
 createTweetsTable()
 
+origins = [
+    "http://localhost",
+    "http://localhost:5173",
+]
+
+methods = ["GET"]
+headers = ["Content-type"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=methods,
+    allow_headers=headers,
+)
+
 @app.get('/getUserTweets/{user}')
 def getUserTweets(user: str):
     dbTweetRecord = getUserFromDB(user)
@@ -90,9 +107,9 @@ def getUserTweetsUpToAmount(user: str, amount: str):
     dbTweetRecord = getUserFromDB(user)
     if dbTweetRecord:
         tweet_id,_,_,created_at = dbTweetRecord
-        currentTime = datetime.now()
-        time_difference = currentTime - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
-        if time_difference.total_seconds() < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
+        currentTime = datetime.utcnow()
+        time_difference = currentTime.timestamp() - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S').timestamp()
+        if time_difference < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
             return json.loads(dbTweetRecord[2])
         else:
             tweets = getTweets(f"{user}", amount=int(amount))
