@@ -73,13 +73,9 @@ origins = [
     "http://localhost:5173",
 ]
 
-methods = ["GET"]
-headers = ["Content-type"]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_methods=methods,
 )
 
 @app.get('/getUserTweets/{user}')
