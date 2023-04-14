@@ -3,7 +3,7 @@ import json
 import sqlite3
 from datetime import datetime
 import snscrape.modules.twitter as sntwitter
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -84,16 +84,26 @@ def getUserTweets(user: str):
     dbTweetRecord = getUserFromDB(user)
     if dbTweetRecord:
         tweet_id,_,_,created_at = dbTweetRecord
-        currentTime = datetime.now()
-        time_difference = currentTime - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
-        if time_difference.total_seconds() < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
+        currentTime = datetime.utcnow()
+        time_difference = currentTime.timestamp() - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S').timestamp()
+        if time_difference < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
             return json.loads(dbTweetRecord[2])
         else:
-            tweets = getTweets(f"{user}")
+            try:
+                tweets = getTweets(f"{user}")
+            except:
+                raise HTTPException(status_code=404, detail="User not found")
+            if tweets.status == 404:
+                    raise HTTPException(status_code=404, detail="User not found")
             updateUserTweets(user, json.dumps(tweets.value))
             return tweets.value
     else:
-        tweets = getTweets(f"{user}")
+        try:
+            tweets = getTweets(f"{user}")
+        except:
+            raise HTTPException(status_code=404, detail="User not found")
+        if tweets.status == 404:
+                raise HTTPException(status_code=404, detail="User not found")
         insertUserTweets(user, json.dumps(tweets.value))
         return tweets.value
 
@@ -107,10 +117,20 @@ def getUserTweetsUpToAmount(user: str, amount: str):
         if time_difference < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
             return json.loads(dbTweetRecord[2])
         else:
-            tweets = getTweets(f"{user}", amount=int(amount))
+            try:
+                tweets = getTweets(f"{user}", amount=int(amount))
+            except:
+                raise HTTPException(status_code=404, detail="User not found")
+            if tweets.status == 404:
+                raise HTTPException(status_code=404, detail="User not found")
             updateUserTweets(user, json.dumps(tweets.value))
             return tweets.value
     else:
-        tweets = getTweets(f"{user}", amount=int(amount))
+        try:
+            tweets = getTweets(f"{user}", amount=int(amount))
+        except:
+            raise HTTPException(status_code=404, detail="User not found")
+        if tweets.status == 404:
+            raise HTTPException(status_code=404, detail="User not found")
         insertUserTweets(user, json.dumps(tweets.value))
         return tweets.value
