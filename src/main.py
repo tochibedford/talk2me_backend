@@ -10,7 +10,7 @@ from typing import Optional
 
 from database import insertUserTweets, updateUserTweets, getUserFromDB, createTweetsTable
 
-DATA_EXPIRY_DURATION_IN_HOURS = 15/60 
+DATA_EXPIRY_DURATION_IN_HOURS = 24 
 class TweetScrapeResult(BaseModel):
     status: int
     value: list[str]
