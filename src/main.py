@@ -10,7 +10,7 @@ from typing import Optional
 
 from database import insertUserTweets, updateUserTweets, getUserFromDB, createTweetsTable
 
-DATA_EXPIRY_DURATION_IN_HOURS = 24 
+DATA_EXPIRY_DURATION_IN_HOURS = 24
 class TweetScrapeResult(BaseModel):
     status: int
     value: list[str]
@@ -84,7 +84,7 @@ def getUserTweets(user: str):
     if dbTweetRecord:
         tweet_id,_,_,created_at = dbTweetRecord
         currentTime = datetime.utcnow()
-        time_difference = currentTime.timestamp() - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S').timestamp()
+        time_difference = currentTime.timestamp() - created_at.timestamp()
         if time_difference < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
             return json.loads(dbTweetRecord[2])
         else:
@@ -112,7 +112,7 @@ def getUserTweetsUpToAmount(user: str, amount: str):
     if dbTweetRecord:
         tweet_id,_,_,created_at = dbTweetRecord
         currentTime = datetime.utcnow()
-        time_difference = currentTime.timestamp() - datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S').timestamp()
+        time_difference = currentTime.timestamp() - created_at.timestamp()
         if time_difference < DATA_EXPIRY_DURATION_IN_HOURS * 60 * 60:
             return json.loads(dbTweetRecord[2])
         else:
