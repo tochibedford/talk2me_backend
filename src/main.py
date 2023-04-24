@@ -70,7 +70,8 @@ createTweetsTable()
 
 origins = [
     "http://localhost:8000",
-    "https://talk2me-frontend.vercel.app"
+    "https://talk2me-frontend.vercel.app",
+    "https://talk4me.vercel.app"
 ]
 
 app.add_middleware(
