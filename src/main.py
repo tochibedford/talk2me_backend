@@ -72,6 +72,8 @@ origins = [
     "http://localhost:8000",
     "https://talk2me-frontend.vercel.app",
     "https://talk4me.vercel.app"
+    "https://talk4me.tochibedford.com"
+    "https://tochibedford.com"
 ]
 
 app.add_middleware(
